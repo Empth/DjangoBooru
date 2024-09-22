@@ -6,14 +6,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Danbooru Gallery</title>
+    <title>Gallery</title>
     <link rel="stylesheet" href="{% static 'gallery/style.css' %}">
   </head>
   <body>
     <h1>Gallery</h1>
+    <p>
+      {% for tag in tags %}
+        {{ tag }},
+      {% endfor %}
+    </p>
     <div class="gallery">
     {% for picture in latest_image_list %}
-            <a target="_blank" href="{{ picture.image.url }}">
+            <a target="_self" href="{% url 'detail' picture.id %}">
                 <img src="{{ picture.image.url }}" class="rules">
             </a>
     {% endfor %}

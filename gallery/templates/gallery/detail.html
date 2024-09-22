@@ -1,1 +1,26 @@
-{{image_detail}}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <link rel="stylesheet" href="">
+  </head>
+  <body>
+    <div>
+        <a target="_blank" href="">
+            <img src="{{ image_post.image.url }}" class="" width="1000px">
+        </a>
+    </div>
+    <p> {{ image_post.description }} </p>
+    <p></p>
+    <p>
+        {% for tag in image_post.tags.all %}
+            {{tag}}
+        {% endfor %}
+    </p>
+  </body>
+</html>
