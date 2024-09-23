@@ -12,14 +12,13 @@
   <body>
     <h1><a target="_self" href="{% url 'gallery:index'%}">Gallery</a></h1>
     <div>
-        <a target="_blank" href="">
-            <img src="{{ image_post.image.url }}" class="" width="700px">
+        <a target="_blank" href="{{imagepost.image.url }}">
+            <img src="{{ imagepost.image.url }}" class="" width="700px">
         </a>
     </div>
-    <p> {{ image_post.description }} </p>
-    <p></p>
+    <p> {{ imagepost.description }} </p>
     <p>
-        {% for tag in image_post.tags.all %}
+        {% for tag in imagepost.tags.all %}
             <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
                 {{tag}}
             </a>
