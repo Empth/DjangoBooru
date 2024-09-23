@@ -19,8 +19,6 @@
     {% endfor %}
     </div>
     {% for tag in tags %}
-    <!-- FIXME v -->
-     <!-- code used multiple times v -->
     <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
       <p>{{tag}} </p>
     </a>

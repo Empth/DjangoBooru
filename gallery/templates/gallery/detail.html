@@ -10,16 +10,19 @@
     <link rel="stylesheet" href="">
   </head>
   <body>
+    <h1><a target="_self" href="{% url 'gallery:index'%}">Gallery</a></h1>
     <div>
         <a target="_blank" href="">
-            <img src="{{ image_post.image.url }}" class="" width="1000px">
+            <img src="{{ image_post.image.url }}" class="" width="700px">
         </a>
     </div>
     <p> {{ image_post.description }} </p>
     <p></p>
     <p>
         {% for tag in image_post.tags.all %}
-            {{tag}}
+            <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
+                {{tag}}
+            </a>
         {% endfor %}
     </p>
   </body>
