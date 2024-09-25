@@ -16,22 +16,24 @@ class ExtraContext(object):
     
 
 class IndexView(generic.ListView, ExtraContext):
+    paginate_by = 4
     template_name = "gallery/index.html"
     context_object_name = "latest_image_list"
 
     def get_queryset(self):
         """Return the last ten published image posts."""
-        return ImagePost.objects.order_by("-pub_date")[:10]
+        return ImagePost.objects.order_by("-pub_date")
     
     
 class FilterIndexView(generic.ListView, ExtraContext):
+    paginate_by = 4
     template_name = "gallery/filter_index.html"
     context_object_name = "latest_image_list"
 
     def get_queryset(self):
         # TODO Implement multi-tag filtering
         """Return the last ten published image posts, filtered with tag 'query'."""
-        return ImagePost.objects.filter(tags__name__in=[self.kwargs['query']]).order_by("-pub_date")[:10]
+        return ImagePost.objects.filter(tags__name__in=[self.kwargs['query']]).order_by("-pub_date")
 
 
 class DetailView(generic.DetailView):
