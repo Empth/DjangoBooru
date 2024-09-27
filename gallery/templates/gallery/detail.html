@@ -10,7 +10,16 @@
     <link rel="stylesheet" href="">
   </head>
   <body>
-    <h1><a target="_self" href="{% url 'gallery:index'%}">Gallery</a></h1>
+    <header class="page-header">
+      <div class="container">
+        <aside class="actions">
+          <a class="btn btn-secondary" href="{% url 'gallery:post_edit' pk=imagepost.pk %}">
+            {% include './icons/pencil-fill.svg' %} Edit post
+          </a>
+        </aside>
+          <h1><a href="{% url 'gallery:index'%}">Gallery</a></h1>
+      </div>
+  </header>
     <div>
         {% if imagepost.image %}
         <a target="_blank" href="{{ imagepost.image.url }}">

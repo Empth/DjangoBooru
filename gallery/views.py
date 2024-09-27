@@ -7,6 +7,7 @@ from taggit.models import Tag
 from django.db.models import F
 from .forms import PostForm
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 num_pages = 10
 
@@ -45,19 +46,41 @@ class DetailView(generic.DetailView):
     template_name = "gallery/detail.html"
 
 
-def post_new(request):
+
+# Note, there is a bug with this function where if a new tag is uploaded alongside an image, then
+# the new tag doesn't show up in the gallery page.
+def post_new_func(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
-            post.pub_date = timezone.now()
             post_tags = form.cleaned_data['tags']
             post.save()
             for tag in post_tags:
                 post.tags.add(tag)
-
             # NOTE need to namespace ALL returns from now on
             return redirect('gallery:detail', pk=post.pk)
     else:
         form = PostForm()
+    return render(request, 'gallery/post_edit.html', {'form': form})
+
+# Note, the post edit function has the same tag bug as post_new_func 
+def post_edit_func(request, pk):
+    post = get_object_or_404(ImagePost, pk=pk)
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post_tags = form.cleaned_data['tags']
+            post.modified_date = timezone.now()
+            post.save()
+            # questionable move
+            for tag in post.tags.all():
+                if tag not in post_tags:
+                    post.tags.remove(tag)
+            for tag in post_tags:
+                post.tags.add(tag)
+            return redirect('gallery:detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
     return render(request, 'gallery/post_edit.html', {'form': form})
