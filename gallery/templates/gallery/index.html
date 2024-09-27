@@ -28,14 +28,14 @@
       {% endif %}
     {% endfor %}
     </div>
-    {% for tag in tags %}
-    <!-- FIXME v -->
-     <!-- code used multiple times v -->
-    <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
-      <p> {{tag}} </p>
-    </a>
-    {% endfor %}
-
+    <p>
+      Tags: 
+      {% for tag in tags %}
+      <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
+        {{tag}}, 
+      </a>
+      {% endfor %}
+    </p>
     <div class="pagination">
       <span class="step-links">
           {% if page_obj.has_previous %}

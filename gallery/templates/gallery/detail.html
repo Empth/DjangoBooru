@@ -18,16 +18,21 @@
         </a>
         {% endif %}
     </div>
+    <br>
     <p> {{ imagepost.description }} </p>
-    <p>
-        {% for tag in imagepost.tags.all %}
-            <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
-                {{tag}}
-            </a>
-        {% endfor %}
+    <br>
+    <p>   
+      Date modified: {{ imagepost.modified_date }}
     </p>
     <p>   
-      Date published: {{ imagepost.pub_date }}
+      Date created: {{ imagepost.created_date }}
+    </p>
+    <p> Tags:
+        {% for tag in imagepost.tags.all %}
+            <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
+                {{tag}},
+            </a>
+        {% endfor %}
     </p>
   </body>
 </html>
