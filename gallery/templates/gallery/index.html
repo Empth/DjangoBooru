@@ -10,12 +10,22 @@
     <link rel="stylesheet" href="{% static 'gallery/style.css' %}">
   </head>
   <body>
-    <h1><a target="_self" href="{% url 'gallery:index'%}">Gallery</a></h1>
+    <header class="page-header">
+      <div class="container">
+          <a href="{% url 'gallery:post_new' %}" class="top-menu">
+              {% include './icons/file-earmark-plus.svg' %}
+              New post
+          </a>
+          <h1><a href="{% url 'gallery:index'%}">Gallery</a></h1>
+      </div>
+  </header>
     <div class="gallery">
     {% for picture in page_obj %}
+      {% if picture.image %}
             <a target="_self" href="{% url 'gallery:detail' picture.id %}">
                 <img src="{{ picture.image.url }}" class="rules">
             </a>
+      {% endif %}
     {% endfor %}
     </div>
     {% for tag in tags %}
