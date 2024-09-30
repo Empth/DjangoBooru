@@ -46,7 +46,6 @@ class DetailView(generic.DetailView):
     template_name = "gallery/detail.html"
 
 
-
 # Note, there is a bug with this function where if a new tag is uploaded alongside an image, then
 # the new tag doesn't show up in the gallery page.
 def post_new_func(request):
