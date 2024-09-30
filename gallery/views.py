@@ -74,7 +74,7 @@ def post_edit_func(request, pk):
             post_tags = form.cleaned_data['tags']
             post.modified_date = timezone.now()
             post.save()
-            # questionable move
+            # questionable loop
             for tag in post.tags.all():
                 if tag not in post_tags:
                     post.tags.remove(tag)
