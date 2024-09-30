@@ -5,7 +5,6 @@ from django.urls import reverse
 
 import tempfile
 from .models import ImagePost
-import os
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
