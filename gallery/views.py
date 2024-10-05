@@ -1,13 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .models import ImagePost
 from taggit.models import Tag
 from django.db.models import F
-from .forms import PostForm
+from .forms import PostForm, PatForm
 from django.utils import timezone
 from taggit.managers import TaggableManager
+from dal import autocomplete
 
 num_pages = 10
 
@@ -18,6 +19,17 @@ class ExtraContext(object):
         context = super(ExtraContext, self).get_context_data(**kwargs)
         context.update(self.extra_context)
         return context
+    
+
+class SearchIndexView(generic.UpdateView):
+    model = ImagePost
+    form_class = PatForm
+    template_name = 'gallery/search_index.html'
+    success_url = reverse_lazy('gallery/search_index')
+
+    def get_object(self):
+        return Tag.objects.first()
+
     
 
 class IndexView(generic.ListView, ExtraContext):
@@ -46,22 +58,37 @@ class DetailView(generic.DetailView):
     template_name = "gallery/detail.html"
 
 
+class TagAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        '''
+        if not self.request.user.is_authenticated():
+            return Tag.objects.none() # ??
+        '''
+
+        qs = Tag.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+
 # Note, there is a bug with this function where if a new tag is uploaded alongside an image, then
 # the new tag doesn't show up in the gallery page.
+# NOTE, NOT a browser cache issue
+# NOTE, it's an issue with the admin post; not really a prob from the form
 def post_new_func(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
-            post_tags = form.cleaned_data['tags']
             post.save()
-            for tag in post_tags:
-                post.tags.add(tag)
+            post.update_tags(form.cleaned_data['tags'])
             # NOTE need to namespace ALL returns from now on
             return redirect('gallery:detail', pk=post.pk)
     else:
         form = PostForm()
     return render(request, 'gallery/post_edit.html', {'form': form})
+
 
 # Note, the post edit function has the same tag bug as post_new_func 
 def post_edit_func(request, pk):
@@ -70,15 +97,9 @@ def post_edit_func(request, pk):
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
-            post_tags = form.cleaned_data['tags']
             post.modified_date = timezone.now()
             post.save()
-            # questionable loop
-            for tag in post.tags.all():
-                if tag not in post_tags:
-                    post.tags.remove(tag)
-            for tag in post_tags:
-                post.tags.add(tag)
+            post.update_tags(form.cleaned_data['tags'])
             return redirect('gallery:detail', pk=post.pk)
     else:
         form = PostForm(instance=post)

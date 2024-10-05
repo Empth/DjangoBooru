@@ -2,9 +2,11 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from .views import TagAutocomplete
 
 import tempfile
 from .models import ImagePost
+from taggit.models import Tag
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -63,6 +65,24 @@ class ImagePostModelTests(TestCase):
         post.update_tags([])
         self.assertTrue(not post.tags.all())
 
+
+class TagAutocompleteTests(TestCase):
+    @override_settings(MEDIA_ROOT=tempfile.TemporaryDirectory().name)
+    def test_tag_autocomplete_not_empty(self):
+        """
+        Tests adding tags to ImagePost using update_tags().
+        """
+
+        image = SimpleUploadedFile('small.gif', small_gif, content_type='image/gif')
+        post = ImagePost.objects.create(image=image, description="DUMMY")
+        tags = ['gif', 'black', 'white', 'post']
+        post.update_tags(tags)
+        image = SimpleUploadedFile('small2.gif', small_gif, content_type='image/gif')
+        post = ImagePost.objects.create(image=image, description="DUMMY2")
+        tags = ['fig', 'stop']
+        post.update_tags(tags)
+        all_tags_response = self.client.get(reverse("gallery:tag-autocomplete"))
+        self.assertQuerySetEqual(all_tags_response, Tag.objects.all())
 
 
 '''

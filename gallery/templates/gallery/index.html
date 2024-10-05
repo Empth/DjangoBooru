@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Gallery</title>
     <link rel="stylesheet" href="{% static 'gallery/style.css' %}">
+    <script type="text/javascript" src="{% static 'admin/js/jquery-3.7.1.min.js' %}"></script>
   </head>
   <body>
     <header class="page-header">
@@ -19,15 +20,19 @@
           <h1><a href="{% url 'gallery:index'%}">Gallery</a></h1>
       </div>
   </header>
+
+
     <div class="gallery">
-    {% for picture in page_obj %}
-      {% if picture.image %}
-            <a target="_self" href="{% url 'gallery:detail' picture.id %}">
-                <img src="{{ picture.image.url }}" class="rules">
-            </a>
-      {% endif %}
-    {% endfor %}
+      {% for picture in page_obj %}
+        {% if picture.image %}
+              <a target="_self" href="{% url 'gallery:detail' picture.id %}">
+                  <img src="{{ picture.image.url }}" class="rules">
+              </a>
+        {% endif %}
+      {% endfor %}
     </div>
+
+
     <p>
       Tags: 
       {% for tag in tags %}
@@ -36,6 +41,8 @@
       </a>
       {% endfor %}
     </p>
+
+
     <div class="pagination">
       <span class="step-links">
           {% if page_obj.has_previous %}
@@ -52,6 +59,19 @@
               <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
           {% endif %}
       </span>
-  </div>
+    </div>
+
+
+    <div>
+      
+      <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ form.media }}
+        <input type="submit"/>
+      </form>
+    </div>
+
+
   </body>
 </html>

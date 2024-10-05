@@ -33,6 +33,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'gallery.apps.GalleryConfig',
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'taggit',
-    'coverage',
+    'coverage'
 ]
 
 MIDDLEWARE = [
