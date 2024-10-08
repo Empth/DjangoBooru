@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .models import ImagePost
@@ -9,6 +9,7 @@ from .forms import PostForm, PatForm
 from django.utils import timezone
 from taggit.managers import TaggableManager
 from dal import autocomplete
+from django.db.models.aggregates import Count
 
 num_pages = 10
 
@@ -25,11 +26,16 @@ class SearchIndexView(generic.UpdateView):
     model = ImagePost
     form_class = PatForm
     template_name = 'gallery/search_index.html'
-    success_url = reverse_lazy('gallery/search_index')
+
+    def get_success_url(self):
+        q = QueryDict(mutable=True)
+        q.setlist('query', ['tag1', 'tag2'])
+        query_string = q.urlencode()
+        base_url = reverse_lazy('gallery:index')
+        return f"{base_url}?{query_string}"
 
     def get_object(self):
         return Tag.objects.first()
-
     
 
 class IndexView(generic.ListView, ExtraContext):
@@ -39,9 +45,14 @@ class IndexView(generic.ListView, ExtraContext):
 
     def get_queryset(self):
         """Return the last ten published image posts."""
-        return ImagePost.objects.order_by("-modified_date")
+        queries = self.request.GET.getlist('query')
+        displayed_images = ImagePost.objects.all()
+        for query in queries:
+            displayed_images = displayed_images.filter(tags__name__in=[query])
+        return displayed_images.order_by("-modified_date")
     
-    
+
+
 class FilterIndexView(generic.ListView, ExtraContext):
     paginate_by = num_pages
     template_name = "gallery/filter_index.html"
@@ -50,6 +61,8 @@ class FilterIndexView(generic.ListView, ExtraContext):
     def get_queryset(self):
         # TODO Implement multi-tag filtering
         """Return the last ten published image posts, filtered with tag 'query'."""
+
+        tags = self.kwargs['query']
         return ImagePost.objects.filter(tags__name__in=[self.kwargs['query']]).order_by("-modified_date")
 
 
@@ -68,7 +81,7 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
         qs = Tag.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-
+            #qs = qs.annotate(num_times=Count('taggit_taggeditem_items')).order_by("-num_times")
         return qs
 
 

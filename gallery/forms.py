@@ -19,5 +19,5 @@ class PatForm(autocomplete.FutureModelForm):
         model = ImagePost
         fields = ('tags',) # ??
         widgets = {
-            'tags': autocomplete.TagSelect2(url='gallery:tag-autocomplete'),
+            'tags': autocomplete.TagSelect2(url='gallery:tag-autocomplete'), 
         }

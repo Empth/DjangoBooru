@@ -38,7 +38,7 @@
     </p>
     <p> Tags:
         {% for tag in imagepost.tags.all %}
-            <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
+            <a target="_self" href="{% url 'gallery:index' %}?query={{ tag }}">  
                 {{tag}},
             </a>
         {% endfor %}

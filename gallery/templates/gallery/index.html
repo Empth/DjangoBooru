@@ -36,7 +36,7 @@
     <p>
       Tags: 
       {% for tag in tags %}
-      <a target="_self" href="{% url 'gallery:filter_index' tag %}">  
+      <a target="_self" href="{% url 'gallery:index' %}?query={{ tag }}">  
         {{tag}}, 
       </a>
       {% endfor %}
@@ -64,7 +64,7 @@
 
     <div>
       
-      <form action="" method="POST">
+      <form action="" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         {{ form.media }}
