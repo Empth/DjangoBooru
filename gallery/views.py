@@ -26,13 +26,21 @@ class SearchIndexView(generic.UpdateView):
     model = ImagePost
     form_class = PatForm
     template_name = 'gallery/search_index.html'
+    queries = []
 
     def get_success_url(self):
         q = QueryDict(mutable=True)
-        q.setlist('query', ['tag1', 'tag2'])
+        form_args = self.get_form_kwargs()
+        print(form_args)
+        queries = form_args['data'].getlist('tags') # TODO no cleaned data is that okay?
+        q.setlist('query', queries)
         query_string = q.urlencode()
         base_url = reverse_lazy('gallery:index')
         return f"{base_url}?{query_string}"
+    
+    def get_form_kwargs(self):
+        kwargs = super(SearchIndexView, self).get_form_kwargs()
+        return kwargs
 
     def get_object(self):
         return Tag.objects.first()
