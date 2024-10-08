@@ -8,7 +8,7 @@ class ImagePost(models.Model):
     description = models.CharField(max_length=1000, blank=True)
     created_date = models.DateTimeField("created date", default=timezone.now)
     modified_date = models.DateTimeField("modified date", default=timezone.now)
-    tags = TaggableManager(blank=True)
+    tags = TaggableManager(blank=False)
 
     def __str__(self):
         if self.image:

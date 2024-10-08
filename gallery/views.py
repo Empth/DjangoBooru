@@ -53,22 +53,8 @@ class IndexView(generic.ListView, ExtraContext, SearchIndexView):
         displayed_images = ImagePost.objects.all()
         for query in queries:
             displayed_images = displayed_images.filter(tags__name__in=[query])
-        return displayed_images.order_by("-modified_date")
+        return displayed_images.order_by("-created_date")
     
-
-'''
-class FilterIndexView(generic.ListView, ExtraContext):
-    paginate_by = num_pages
-    template_name = "gallery/filter_index.html"
-    context_object_name = "latest_image_list"
-
-    def get_queryset(self):
-        # TODO Implement multi-tag filtering
-        """Return the last ten published image posts, filtered with tag 'query'."""
-
-        tags = self.kwargs['query']
-        return ImagePost.objects.filter(tags__name__in=[self.kwargs['query']]).order_by("-modified_date")
-'''
 
 class DetailView(generic.DetailView, SearchIndexView):
     model = ImagePost
