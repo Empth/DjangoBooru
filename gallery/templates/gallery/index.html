@@ -41,7 +41,20 @@
       </a>
       {% endfor %}
     </p>
+  
+    <br>
 
+    <div class="search">
+      <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ form.media }}
+        <input type="submit"/>
+      </form>
+    </div>
+
+    <br>
+    <br>
 
     <div class="pagination">
       <span class="step-links">
@@ -60,18 +73,6 @@
           {% endif %}
       </span>
     </div>
-
-
-    <div>
-      
-      <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {{ form.media }}
-        <input type="submit"/>
-      </form>
-    </div>
-
 
   </body>
 </html>

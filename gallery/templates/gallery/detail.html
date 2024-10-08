@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Details</title>
     <link rel="stylesheet" href="">
+    <script type="text/javascript" src="{% static 'admin/js/jquery-3.7.1.min.js' %}"></script>
   </head>
   <body>
     <header class="page-header">
@@ -43,5 +44,17 @@
             </a>
         {% endfor %}
     </p>
+
+
+    <br>
+
+    <div class="search">
+      <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ form.media }}
+        <input type="submit"/>
+      </form>
+    </div>
   </body>
 </html>

@@ -22,11 +22,10 @@ class ExtraContext(object):
         return context
     
 
-class SearchIndexView(generic.UpdateView):
+class SearchIndexView(generic.FormView):
     model = ImagePost
     form_class = PatForm
-    template_name = 'gallery/search_index.html'
-    queries = []
+    #template_name = 'gallery/search_index.html'
 
     def get_success_url(self):
         q = QueryDict(mutable=True)
@@ -41,12 +40,9 @@ class SearchIndexView(generic.UpdateView):
     def get_form_kwargs(self):
         kwargs = super(SearchIndexView, self).get_form_kwargs()
         return kwargs
-
-    def get_object(self):
-        return Tag.objects.first()
     
 
-class IndexView(generic.ListView, ExtraContext):
+class IndexView(generic.ListView, ExtraContext, SearchIndexView):
     paginate_by = num_pages
     template_name = "gallery/index.html"
     context_object_name = "latest_image_list"
@@ -60,7 +56,7 @@ class IndexView(generic.ListView, ExtraContext):
         return displayed_images.order_by("-modified_date")
     
 
-
+'''
 class FilterIndexView(generic.ListView, ExtraContext):
     paginate_by = num_pages
     template_name = "gallery/filter_index.html"
@@ -72,9 +68,9 @@ class FilterIndexView(generic.ListView, ExtraContext):
 
         tags = self.kwargs['query']
         return ImagePost.objects.filter(tags__name__in=[self.kwargs['query']]).order_by("-modified_date")
+'''
 
-
-class DetailView(generic.DetailView):
+class DetailView(generic.DetailView, SearchIndexView):
     model = ImagePost
     template_name = "gallery/detail.html"
 
