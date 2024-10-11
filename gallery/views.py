@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, QueryDict
+from django.http import HttpResponse, QueryDict, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .models import ImagePost
@@ -107,3 +107,10 @@ def post_edit_func(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'gallery/post_edit.html', {'form': form})
+
+def delete_post(request, post_id=None):
+    # TODO login authentication for deletion, as well as create post and edit post
+    # TODO needs a confirm deletion page as well but I'm lazy
+    post_to_delete = ImagePost.objects.get(id=post_id)
+    post_to_delete.delete()
+    return HttpResponseRedirect('gallery/')

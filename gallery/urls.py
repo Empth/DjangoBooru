@@ -10,4 +10,5 @@ urlpatterns = [
     path('new/', views.post_new_func, name='post_new'),
     path('<int:pk>/edit/', views.post_edit_func, name='post_edit'),
     path('tag-autocomplete/', views.TagAutocomplete.as_view(), name='tag-autocomplete'),
+    path('<post_id>/delete', views.delete_post, name='delete')
 ]
