@@ -9,6 +9,5 @@ urlpatterns = [
     path("<int:pk>/", views.DetailView.as_view(), name="detail"),
     path('new/', views.post_new_func, name='post_new'),
     path('<int:pk>/edit/', views.post_edit_func, name='post_edit'),
-    path('search_index', views.SearchIndexView.as_view(), name='search_index'),
     path('tag-autocomplete/', views.TagAutocomplete.as_view(), name='tag-autocomplete'),
 ]

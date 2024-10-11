@@ -11,6 +11,9 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = ImagePost
         fields = ['image', 'description', 'tags']
+        widgets = {
+            'tags': autocomplete.TagSelect2(url='gallery:tag-autocomplete'), 
+        }
 
 
 # Pat == ImagePost
