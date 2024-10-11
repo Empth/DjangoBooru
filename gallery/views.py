@@ -113,4 +113,4 @@ def delete_post(request, post_id=None):
     # TODO needs a confirm deletion page as well but I'm lazy
     post_to_delete = ImagePost.objects.get(id=post_id)
     post_to_delete.delete()
-    return HttpResponseRedirect('gallery/')
+    return redirect('gallery:index')
