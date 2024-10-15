@@ -1,8 +1,10 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, Client
 from django.utils import timezone
+from django.http import HttpRequest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db.models import Count    
 from django.urls import reverse
-from .views import TagAutocomplete
+from .views import TagAutocomplete, delete_post
 
 import tempfile
 from .models import ImagePost
@@ -65,14 +67,29 @@ class ImagePostModelTests(TestCase):
         post.update_tags([])
         self.assertTrue(not post.tags.all())
 
+class ViewFunctionTests(TestCase):
+    @override_settings(MEDIA_ROOT=tempfile.TemporaryDirectory().name)
+    def test_delete_keeps_count(self):
+        """
+        Tests that deleting all posts means there are 0 posts.
+        """
+
+        image = SimpleUploadedFile('small.gif', small_gif, content_type='image/gif')
+        post = ImagePost.objects.create(image=image, description="DUMMY")
+        self.assertTrue(post.pk == 1)
+        self.assertTrue(len(ImagePost.objects.all()) == 1)
+        requester = HttpRequest()
+        delete_post(request=requester, post_id = 1)
+        self.assertTrue(len(ImagePost.objects.all()) == 0)
+
 
 class TagAutocompleteTests(TestCase):
     @override_settings(MEDIA_ROOT=tempfile.TemporaryDirectory().name)
-    def test_tag_autocomplete_not_empty(self):
+    def test_tag_autocomplete_detects_uploaded_tags(self):
         """
-        Tests adding tags to ImagePost using update_tags().
+        Tests that client sees that tag autocomplete detects the correct tags of uploaded posts.
         """
-
+        import json
         image = SimpleUploadedFile('small.gif', small_gif, content_type='image/gif')
         post = ImagePost.objects.create(image=image, description="DUMMY")
         tags = ['gif', 'black', 'white', 'post']
@@ -81,8 +98,13 @@ class TagAutocompleteTests(TestCase):
         post = ImagePost.objects.create(image=image, description="DUMMY2")
         tags = ['fig', 'stop']
         post.update_tags(tags)
-        all_tags_response = self.client.get(reverse("gallery:tag-autocomplete"))
-        #self.assertQuerySetEqual(all_tags_response, Tag.objects.all())
+        c = Client()
+        response = c.get(reverse('gallery:tag-autocomplete'))
+        obtained_tags = json.loads(response.content.decode('utf-8'))
+        test_tags = []
+        for tag in obtained_tags['results']:
+            test_tags.append(tag['text'])
+        self.assertQuerySetEqual(set(test_tags), set([tag.name for tag in Tag.objects.all()]))
 
 
 '''

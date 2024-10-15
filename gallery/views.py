@@ -10,6 +10,7 @@ from django.utils import timezone
 from taggit.managers import TaggableManager
 from dal import autocomplete
 from django.db.models.aggregates import Count
+from django.contrib.auth.forms import UserCreationForm
 
 num_pages = 10
 
@@ -114,3 +115,13 @@ def delete_post(request, post_id=None):
     post_to_delete = ImagePost.objects.get(id=post_id)
     post_to_delete.delete()
     return redirect('gallery:index')
+
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("gallery:index")
+    else:
+        form = UserCreationForm()
+    return render(request, "gallery/register.html", { "form": form })
