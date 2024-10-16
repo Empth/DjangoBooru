@@ -18,13 +18,22 @@
               New post
           </a>
           <p></p>
-          <a href="{% url 'gallery:login_user' %}" class="top-menu">
-            Login
-          </a>
-          <p></p>
+          {% if user.is_authenticated %}
+            <p>Logged in as {{ user }}</p>
+            <p></p>
+            <form action="{% url 'gallery:logout_user' %}" method="post">
+              {% csrf_token %}
+              <button aria-label="User Logout" title="Logout">Logout</button>
+            </form>
+          {% else %}
+            <a href="{% url 'gallery:login_user' %}" class="top-menu">
+              Login
+            </a>
+            <p></p>
             <a href="{% url 'gallery:register_user' %}" class="top-menu">
               Register
             </a>
+          {% endif %}
           <h1><a href="{% url 'gallery:index'%}">Gallery</a></h1>
       </div>
   </header>

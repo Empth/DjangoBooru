@@ -11,7 +11,8 @@ from taggit.managers import TaggableManager
 from dal import autocomplete
 from django.db.models.aggregates import Count
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 
 num_pages = 10
 
@@ -81,6 +82,7 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
 # the new tag doesn't show up in the gallery page.
 # NOTE, NOT a browser cache issue
 # NOTE, it's an issue with the admin post; not really a prob from the form
+@login_required(login_url="/gallery/login")
 def post_new_func(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
@@ -96,6 +98,7 @@ def post_new_func(request):
 
 
 # Note, the post edit function has the same tag bug as post_new_func 
+@login_required(login_url="/gallery/login")
 def post_edit_func(request, pk):
     post = get_object_or_404(ImagePost, pk=pk)
     if request.method == "POST":
@@ -110,6 +113,7 @@ def post_edit_func(request, pk):
         form = PostForm(instance=post)
     return render(request, 'gallery/post_edit.html', {'form': form})
 
+@login_required(login_url="/gallery/login")
 def delete_post(request, post_id=None):
     # TODO login authentication for deletion, as well as create post and edit post
     # TODO needs a confirm deletion page as well but I'm lazy
@@ -135,7 +139,15 @@ def login_user(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect("gallery:index")
+            if 'next' in request.POST:
+                return redirect(request.POST.get('next'))
+            else:
+                return redirect("gallery:index")
     else:
         form = AuthenticationForm()
     return render(request, "gallery/login.html", { "form": form })
+
+def logout_user(request):
+    if request.method == "POST":
+        logout(request)
+        return redirect("gallery:index")

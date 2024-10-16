@@ -17,9 +17,13 @@
     <h1>Login as a Returning User</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form }} 
+        {{ form }}
+        {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
+        {% endif %}
        <button>Submit</button>
     </form>
-
+    <p></p>
+    <a href="{% url 'gallery:register_user'%}">Register as a new user</a>
   </body>
 </html>
