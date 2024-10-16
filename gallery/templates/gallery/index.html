@@ -17,8 +17,12 @@
               {% include './icons/file-earmark-plus.svg' %}
               New post
           </a>
-          <p> </p>
-            <a href="{% url 'gallery:register' %}" class="top-menu">
+          <p></p>
+          <a href="{% url 'gallery:login_user' %}" class="top-menu">
+            Login
+          </a>
+          <p></p>
+            <a href="{% url 'gallery:register_user' %}" class="top-menu">
               Register
             </a>
           <h1><a href="{% url 'gallery:index'%}">Gallery</a></h1>
