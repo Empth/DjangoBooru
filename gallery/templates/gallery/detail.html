@@ -13,17 +13,6 @@
   <body>
     <header class="page-header">
       <div class="container">
-        <aside class="actions">
-          <a class="btn btn-secondary" href="{% url 'gallery:post_edit' pk=imagepost.pk %}">
-            {% include './icons/pencil-fill.svg' %} Edit post
-          </a>
-        </aside>
-        <br>
-        <aside class="more-actions">
-          <a class="btn btn-secondary" href="{% url 'gallery:delete' imagepost.pk %}">
-            {% include './icons/trash.svg' %} Delete
-          </a>
-        </aside>
           <h1><a href="{% url 'gallery:index'%}">Gallery</a></h1>
       </div>
   </header>
@@ -51,7 +40,17 @@
         {% endfor %}
     </p>
 
-
+    <aside class="actions">
+      <a class="btn btn-secondary" href="{% url 'gallery:post_edit' pk=imagepost.pk %}">
+        {% include './icons/pencil-fill.svg' %} Edit post
+      </a>
+    </aside>
+    <br>
+    <aside class="more-actions">
+      <a class="btn btn-secondary" href="{% url 'gallery:delete' imagepost.pk %}">
+        {% include './icons/trash.svg' %} Delete
+      </a>
+    </aside>
     <br>
 
     <div class="search">
