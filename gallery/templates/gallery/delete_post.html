@@ -1,0 +1,25 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Delete Post</title>
+    <link rel="stylesheet" href="{% static 'gallery/style.css' %}">
+    </head>
+    <body>
+    <header class="page-header">
+        <div class="container">
+            <h1><a href="{% url 'gallery:index'%}">Gallery</a></h1>
+        </div>
+    </header>
+
+    <h1>Delete this post?</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+    </body>
+</html>

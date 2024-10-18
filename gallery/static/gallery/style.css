@@ -1,8 +1,6 @@
 .gallery {
-    display: block;
-    grid-template-columns: repeat(2, 1fr); /* 2 columns */
-    column-width: 240px;
-    column-gap: 1%;            
+    grid-template-columns: repeat(2, 100px); /* 2 columns */
+    column-gap: 10%;            
     padding: 5px; 
     row-gap: 10px;  /* Vertical gap between rows */
     justify-items: center;  /* Center images within their cells*/ 

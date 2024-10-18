@@ -5,7 +5,7 @@ from django.views import generic
 from .models import ImagePost
 from taggit.models import Tag
 from django.db.models import F
-from .forms import PostForm, PatForm
+from .forms import PostForm, PatForm, DeletePostForm
 from django.utils import timezone
 from taggit.managers import TaggableManager
 from dal import autocomplete
@@ -14,7 +14,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 
-num_pages = 10
+num_per_page = 12
 
 class ExtraContext(object):
     extra_context = {}
@@ -25,10 +25,9 @@ class ExtraContext(object):
         return context
     
 
-class SearchIndexView(generic.FormView):
+class SearchView(generic.FormView):
     model = ImagePost
     form_class = PatForm
-    #template_name = 'gallery/search_index.html'
 
     def get_success_url(self):
         q = QueryDict(mutable=True)
@@ -41,12 +40,12 @@ class SearchIndexView(generic.FormView):
         return f"{base_url}?{query_string}"
     
     def get_form_kwargs(self):
-        kwargs = super(SearchIndexView, self).get_form_kwargs()
+        kwargs = super(SearchView, self).get_form_kwargs()
         return kwargs
     
 
-class IndexView(generic.ListView, ExtraContext, SearchIndexView):
-    paginate_by = num_pages
+class IndexView(generic.ListView, ExtraContext, SearchView):
+    paginate_by = num_per_page
     template_name = "gallery/index.html"
     context_object_name = "latest_image_list"
 
@@ -59,7 +58,7 @@ class IndexView(generic.ListView, ExtraContext, SearchIndexView):
         return displayed_images.order_by("-created_date")
     
 
-class DetailView(generic.DetailView, SearchIndexView):
+class DetailView(generic.DetailView, SearchView):
     model = ImagePost
     template_name = "gallery/detail.html"
 
@@ -111,15 +110,21 @@ def post_edit_func(request, pk):
             return redirect('gallery:detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
-    return render(request, 'gallery/post_edit.html', {'form': form})
+    return render(request, 'gallery/post_edit.html', {'form': form })
+
 
 @login_required(login_url="/gallery/login")
 def delete_post(request, post_id=None):
-    # TODO login authentication for deletion, as well as create post and edit post
-    # TODO needs a confirm deletion page as well but I'm lazy
-    post_to_delete = ImagePost.objects.get(id=post_id)
-    post_to_delete.delete()
-    return redirect('gallery:index')
+    post = get_object_or_404(ImagePost, pk=post_id)
+    if request.method == "POST":
+        form = DeletePostForm(request.POST)
+        if form.is_valid():
+            post.delete()
+            return redirect('gallery:index')
+    else:
+        form = DeletePostForm()
+    return render(request, 'gallery/delete_post.html', {'form': form })
+
 
 def register_user(request):
     if request.method == "POST":
@@ -146,6 +151,7 @@ def login_user(request):
     else:
         form = AuthenticationForm()
     return render(request, "gallery/login.html", { "form": form })
+
 
 def logout_user(request):
     if request.method == "POST":

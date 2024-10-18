@@ -24,3 +24,6 @@ class PatForm(autocomplete.FutureModelForm):
         widgets = {
             'tags': autocomplete.TagSelect2(url='gallery:tag-autocomplete'), 
         }
+
+class DeletePostForm(forms.Form):
+    var = 'hi'
